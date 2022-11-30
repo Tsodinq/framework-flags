@@ -20,21 +20,21 @@ app.listen(process.env.PORT || 3000, () => {
 
 app.get(
   "/flags/:env",
-  (req, res, next) => rateLimited(10, 1000, req, res, next),
+  (req, res, next) => rateLimited(150, 1000, req, res, next),
   getFlagsEndpoint
 );
 app.patch(
   "/flags/:env/:key",
-  (req, res, next) => rateLimited(10, 1000, req, res, next),
+  (req, res, next) => rateLimited(50, 60000, req, res, next),
   updateFlagEndpoint
 );
 app.delete(
   "/flags/:env/:key",
-  (req, res, next) => rateLimited(10, 1000, req, res, next),
+  (req, res, next) => rateLimited(30, 60000, req, res, next),
   deleteFlagEndpoint
 );
 app.put(
   "/flags/:env/:key",
-  (req, res, next) => rateLimited(10, 1000, req, res, next),
+  (req, res, next) => rateLimited(50, 60000, req, res, next),
   createFlagEndpoint
 );
