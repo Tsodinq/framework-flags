@@ -1,5 +1,7 @@
 # `framework-flags`
 
+[![CI](https://github.com/Tsodinq/framework-flags/actions/workflows/ci.yml/badge.svg)](https://github.com/Tsodinq/framework-flags/actions/workflows/ci.yml)
+
 This is a simple Express-based web server that serves dynamic 'feature flags' to Framework (although it could be used for any other project). It's designed to be used in conjunction with the [framework-flags-client](https://github.com/Tsodinq/framework-flags-client) package in a Next.js project.
 
 ## API
