@@ -1,19 +1,18 @@
 import { Request, Response } from "express";
 import { validateApiKey } from "../api-utils";
 import { errors } from "../errors";
-import { Flag } from "../flag";
+import { Flag, FlagBag } from "../flag";
 import { createFlag, getFlagBucket } from "../fs";
 
 function createFlagEndpoint(req: Request, res: Response) {
-  const { env, key } = req.params as {
-    env: "prod" | "dev";
+  const { key } = req.params as {
     key: string;
   };
   const { value } = req.body as {
     value: Flag;
   };
 
-  if (!validateApiKey(req, res)) return;
+  if (!validateApiKey(req, res, true)) return;
 
   if (
     key === undefined ||
@@ -28,23 +27,26 @@ function createFlagEndpoint(req: Request, res: Response) {
     });
   }
 
-  const bucket = getFlagBucket(env);
+  const buckets = [getFlagBucket("dev"), getFlagBucket("prod")];
 
-  if (bucket[key] !== undefined) {
+  if (buckets.some((bucket: FlagBag) => bucket[key] !== undefined)) {
     res.status(409).json({
       error: errors.FLAG_ALREADY_EXISTS,
     });
   }
 
-  if (createFlag(env, key, value)) {
-    res.status(200).json({
-      message: "Flag created successfully",
-    });
-  } else {
+  try {
+    createFlag("dev", key, value);
+    createFlag("prod", key, value);
+  } catch (e) {
     res.status(500).json({
       error: errors.UNKNOWN_ERROR,
     });
   }
+
+  res.status(200).json({
+    message: "Flag created",
+  });
 }
 
 export { createFlagEndpoint };

@@ -35,9 +35,9 @@ Updates the value of a flag for the specified environment, and returns the updat
 | ------- | ------------------------------------------ |
 | `value` | Valid flag value (string, number, boolean) |
 
-### **`DELETE`** `/flags/:environment/:key`
+### **`DELETE`** `/flags/:key`
 
-Deletes a flag for the specified environment, and returns the updated flag bag.
+Deletes a flag from all environments, and returns the updated flag bag.
 
 #### Headers
 
@@ -45,9 +45,9 @@ Deletes a flag for the specified environment, and returns the updated flag bag.
 | --------------- | ---------------------------------------------------------------------------------------- |
 | `Authorization` | API token found inside the flag JSON file (`_apikey` key) (example: `Bearer 1234567890`) |
 
-### **`PUT`** `/flags/:environment/:key`
+### **`PUT`** `/flags/:key`
 
-Creates a flag for the specified environment, and returns the updated flag bag.
+Creates a flag for all environments, and returns the updated flag bag. Creating flags for specific environments is not supported, as it'll result in sync issues between environments and will cause problems in client implementations.
 
 #### Headers
 

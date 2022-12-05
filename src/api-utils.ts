@@ -21,28 +21,44 @@ function validateEnv(env: string): env is "prod" | "dev" {
  *
  * @param request Express request object
  * @param response Express response object
+ * @param anyEnv If true, any environment key is valid
  * @returns True if API key is valid
  */
-function validateApiKey(request: Request, response: Response) {
-  const { env } = request.params as {
-    env: "prod" | "dev";
-  };
+function validateApiKey(request: Request, response: Response, anyEnv = false) {
+  if (!anyEnv) {
+    const { env } = request.params as {
+      env: "prod" | "dev";
+    };
 
-  if (!validateEnv(env)) {
-    response.status(400).json({
-      error: errors.INVALID_ENVIRONMENT,
-    });
+    if (!validateEnv(env)) {
+      response.status(400).json({
+        error: errors.INVALID_ENVIRONMENT,
+      });
 
-    return false;
+      return false;
+    }
   }
 
   const key = request.headers.authorization?.split(" ")[1];
-  if (!key || !validateKey(key, env)) {
-    response.status(401).json({
-      error: errors.INVALID_API_KEY,
-    });
+  if (anyEnv) {
+    if (!validateKey(String(key), "prod") && !validateKey(String(key), "dev")) {
+      response.status(401).json({
+        error: errors.INVALID_API_KEY,
+      });
 
-    return false;
+      return false;
+    }
+  } else {
+    const { env } = request.params as {
+      env: "prod" | "dev";
+    };
+    if (!key || !validateKey(key, env)) {
+      response.status(401).json({
+        error: errors.INVALID_API_KEY,
+      });
+
+      return false;
+    }
   }
 
   return true;

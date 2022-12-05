@@ -7,10 +7,12 @@ import { deleteFlagEndpoint } from "./routes/delete-flag";
 import { getFlagsEndpoint } from "./routes/get-flags";
 import { updateFlagEndpoint } from "./routes/update-flag";
 import { startServer } from "./server";
+import cors from "cors";
 
 const app = express();
 
 app.use(json());
+app.use(cors());
 dotenv.config();
 startServer();
 
@@ -25,12 +27,12 @@ app.patch(
   updateFlagEndpoint
 );
 app.delete(
-  "/flags/:env/:key",
+  "/flags/:key",
   (req, res, next) => rateLimited(30, 60000, req, res, next),
   deleteFlagEndpoint
 );
 app.put(
-  "/flags/:env/:key",
+  "/flags/:key",
   (req, res, next) => rateLimited(50, 60000, req, res, next),
   createFlagEndpoint
 );
