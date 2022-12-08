@@ -49,6 +49,7 @@ async function testUpdateRoute(
 
 describe("get flags from different environments", () => {
   if (!bucketExists()) createFlagBuckets();
+
   test("GET /flags/dev", async () => {
     return await testGetRoute(supertest(app), "dev");
   });

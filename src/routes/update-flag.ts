@@ -14,26 +14,20 @@ function updateFlagEndpoint(req: Request, res: Response) {
   };
 
   if (!validateApiKey(req, res)) return;
-
-  if (
-    key === undefined ||
-    value === undefined ||
-    (typeof value !== "string" &&
-      typeof value !== "boolean" &&
-      typeof value !== "number")
-  ) {
+  if (!key || !value) {
     res.status(400).json({
       error: errors.INVALID_REQUEST,
       reason: "Missing key or value",
     });
+    return;
   }
 
   const bucket = getFlagBucket(env);
-
   if (bucket[key] === undefined) {
     res.status(404).json({
       error: errors.FLAG_NOT_FOUND,
     });
+    return;
   }
 
   if (updateFlag(env, key, value)) {

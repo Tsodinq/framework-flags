@@ -16,25 +16,17 @@ app.use(cors());
 dotenv.config();
 startServer();
 
-app.get(
-  "/flags/:env",
-  (req, res, next) => rateLimited(150, 1000, req, res, next),
-  getFlagsEndpoint
-);
+app.get("/flags/:env", rateLimited.bind(null, 150, 1000), getFlagsEndpoint);
 app.patch(
   "/flags/:env/:key",
-  (req, res, next) => rateLimited(50, 60000, req, res, next),
+  rateLimited.bind(null, 50, 60000),
   updateFlagEndpoint
 );
 app.delete(
   "/flags/:key",
-  (req, res, next) => rateLimited(30, 60000, req, res, next),
+  rateLimited.bind(null, 30, 60000),
   deleteFlagEndpoint
 );
-app.put(
-  "/flags/:key",
-  (req, res, next) => rateLimited(50, 60000, req, res, next),
-  createFlagEndpoint
-);
+app.put("/flags/:key", rateLimited.bind(null, 50, 60000), createFlagEndpoint);
 
 export { app };

@@ -12,16 +12,17 @@ function getFlagsEndpoint(request: Request, response: Response) {
     response.status(400).json({
       error: errors.INVALID_ENVIRONMENT,
     });
+    return;
   }
 
   const bucket = getFlagBucket(env);
   response.status(200).json(
-    Object.keys(bucket).reduce((acc, key) => {
-      if (!key.startsWith("_")) {
+    Object.keys(bucket)
+      .filter((key) => !key.startsWith("_"))
+      .reduce((acc, key) => {
         acc[key] = bucket[key];
-      }
-      return acc;
-    }, {} as Record<string, any>)
+        return acc;
+      }, {} as Record<string, any>)
   );
 }
 
