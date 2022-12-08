@@ -47,39 +47,31 @@ async function testUpdateRoute(
     });
 }
 
+const envs = ["dev", "prod"];
+
 describe("get flags from different environments", () => {
   if (!bucketExists()) createFlagBuckets();
 
-  test("GET /flags/dev", async () => {
-    return await testGetRoute(supertest(app), "dev");
-  });
-
-  test("GET /flags/prod", async () => {
-    return await testGetRoute(supertest(app), "prod");
+  envs.forEach((env) => {
+    test(`GET /flags/${env}`, async () => {
+      return await testGetRoute(supertest(app), env);
+    });
   });
 });
 
 describe("update flags in different environments", () => {
   if (!bucketExists()) createFlagBuckets();
-  createFlag("dev", "test", "waiting...");
-  createFlag("prod", "test", "waiting...");
-
-  test("PATCH /flags/dev/:key", async () => {
-    return await testUpdateRoute(supertest(app), "dev", "test", "updated").then(
-      () => {
-        deleteFlag("dev", "test");
-      }
-    );
+  envs.forEach((env) => {
+    createFlag(env, "test", "waiting...");
   });
 
-  test("PATCH /flags/prod/:key", async () => {
-    return await testUpdateRoute(
-      supertest(app),
-      "prod",
-      "test",
-      "updated"
-    ).then(() => {
-      deleteFlag("prod", "test");
+  envs.forEach((env) => {
+    test(`PATCH /flags/${env}/:key`, async () => {
+      return await testUpdateRoute(supertest(app), env, "test", "updated").then(
+        () => {
+          deleteFlag(env, "test");
+        }
+      );
     });
   });
 });
